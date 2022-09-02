@@ -1,0 +1,80 @@
+1 Create a private Bitbucket repo
+
+2 Create a Spring Boot MicroService
+  Use the spring initializer to set up the project https://start.spring.io/
+  Name the project as follows:  atlas-ramp-up-<firstName>-<lastName>
+
+3 Expose a REST Endpoint
+  Create a controller called GatewayController under a controller package
+  Endpoint info:
+    Method: GET
+    Path: fetch/googleUsers
+
+4 Set up Kafka
+  Topic Name: ingested-data
+  Configure your kafka listener and producer
+    Use StringSerializer and StringDeserializer
+    All configurations should go under a config package   <!-- what should be removed from producer/consumer -->
+  Create a listener class called AssetsIngestListener under a kafka/consume package
+  The listener should listen to the ingested-data topic and log incoming messages.
+
+5 Create a service called AssetsIngestService under a service package
+  The AssetsIngestService service will be responsible for calling the Gateway endpoint and producing
+  the results to the ingested-data topic.
+    This service should have a method called process
+    This method can return a mock data for the time being
+
+6 Inject the AssetsIngestService bean in GatewayController and call the process method to receive the mock data.
+  At this point, when you hit http://localhost:8080/fetch/googleUsers
+    The mock data should get returned.
+    The mock data should get produced to the ingested-data topic.
+    The mock data is logged by the listener.
+
+############################################################################################## 4/7/22
+
+7 Add unit and cucumber tests
+
+8 Include all the BetterCloud dependencies needed
+  Refer to https://bitbucket.org/bettercloud/integrations-ingestion-micro/src/continuous/build.gradle
+
+9 Set up your postman to call this Gateway endpoint
+  Url: https://x-holding.devbettercloud.com/private/gateway/v1
+  Method: POST
+  Body: (The integrationId and tenantId might be different depending on the integration installed in
+  the corresponding environment. Please check bacon to verify.)
+  {
+    "tenantId": "6ba920b2-098c-11ec-a73d-6f1aabf220db",
+    "integrationId": "6b6a425f-098c-11ec-8c5d-cdde4890d4d5",
+    "domain": "googleapis.com/drive/v3",    "path": "/files",
+    "method": "get",
+    "parametersMap": {}
+  }
+
+10 Create a DTO (Data transfer object) called GoogleFiles which represents the Gateway API response for Google files
+
+11 It needs to be created under a models package
+
+12 Remove the mock data and implement the logic for calling the Gateway endpoint in the AssetsIngestService service
+
+13 Convert the Gateway API response to GoogleFiles DTO
+
+14 The process method should return the GoogleFiles record
+
+15 Iterate through the Google files and produce each file to the ingested-data topic
+
+16 Finish up any remaining unit and cucumber tests
+
+17 Update ReadMe
+
+18 Congratulations! You’ve successfully completed the Atlas ramp up project. Reach out to Akshay Mendki
+ or Hubert Pan  and schedule a code review meeting.
+
+Requirements:
+Java SDK 11
+Junit 4 or 5 for unit testing
+Cucumber for integrations testing
+Gradle
+Lombok : For Getters, Setters and Constructor Injection
+Lombok Slf4j logger
+Your code should conform to Google Java Style. Check out this documentation: https://bettercloud.atlassian.net/wiki/spaces/EN/pages/1479672224/Code+Style
+Your code should adhere to the latest Java and Spring coding standards

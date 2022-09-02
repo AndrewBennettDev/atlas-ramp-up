@@ -1,0 +1,55 @@
+server:
+    port: 7070
+spring:
+    cloud:
+        gcp:
+            pubsub:
+                emulator-host: localhost:8085
+                project-id: local-project
+    application:
+        name: RampUp
+    kafka:
+        consumer:
+            bootstrap-servers: 127.0.0.1:9092
+            group-id: atlas-ramp-up
+            auto-offset-reset: earliest
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        producer:
+            bootstrap-servers: 127.0.0.1:9092
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.apache.kafka.common.serialization.StringSerializer
+atlas-ramp-up:
+    kafka:
+        topic: integrated-data
+
+base:
+    url: https://localhost:8080
+    public:
+        url: https://localhost:8080
+bettercloud:
+    micro-meta:
+        name:
+            pretty-name: AtlasRampUp
+        owner:
+            tribe: INTEGRATIONS
+            team: ATLAS
+            system: INTEGRATIONS
+    hmac:
+        readTimeout: 60000
+
+management:
+    health:
+        defaults:
+            enabled: false
+    server:
+        port: 2443
+    endpoint:
+        prometheus:
+            enabled: true
+    endpoints:
+        web:
+            exposure:
+                include: health,prometheus,info
+            base-path: /
+

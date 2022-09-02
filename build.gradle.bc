@@ -1,0 +1,128 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+plugins {
+    id 'com.google.cloud.tools.jib' version '2.5.0'
+    id 'jacoco'
+    id 'java'
+    id 'org.sonarqube' version '3.0'
+    id 'org.springframework.boot' version '2.6.4'
+    id "com.bettercloud.deployment-plugin" version "2.7.0"
+}
+
+apply plugin: "io.spring.dependency-management"
+apply from: "gradle/sonar.gradle"
+
+group = "com.example"
+version = "0.0.1"
+sourceCompatibility = '11'
+
+jacoco {
+    toolVersion = "0.8.4"
+}
+
+sourceSets {
+    integrationtest {
+        java {
+            srcDirs = ["src/integrationtest/java"]
+        }
+    }
+}
+
+task integrationTest(type: Test, group: "verification") {
+    testClassesDirs = sourceSets.integrationtest.output.classesDirs
+    classpath = sourceSets.integrationtest.runtimeClasspath
+    maxParallelForks = 1
+    failFast = true
+
+    // Require this task to execute after the unit tests
+    mustRunAfter tasks.test
+}
+
+check.dependsOn integrationTest
+
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Greenwich.RELEASE"
+//        mavenBom "com.bettercloud:shared-bom:14.+"
+//    }
+//    resolutionStrategy {
+//        cacheDynamicVersionsFor 0, "seconds"
+//    }
+//}
+
+dependencies {
+    implementation enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)
+    annotationProcessor enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+//    implementation enforcedPlatform('com.google.cloud:spring-cloud-gcp-dependencies:2.0.0')
+
+    // Spring
+    implementation group: "org.springframework.boot", name: "spring-boot-starter-actuator"
+    implementation group: "org.springframework", name: "spring-context-support"
+    implementation group: "org.springframework.kafka", name: "spring-kafka"
+    implementation group: "org.springframework.kafka", name: "spring-kafka-test"
+    testImplementation group: "org.springframework.boot", name: "spring-boot-starter-test"
+//    implementation group: "org.springframework.cloud", name: "spring-cloud-starter-kubernetes-config"
+//    implementation 'com.google.cloud:spring-cloud-gcp-starter-pubsub'
+    implementation enforcedPlatform('com.bettercloud:shared-bom:14.+')
+
+    // Kafka
+    implementation group: "io.confluent", name: "kafka-avro-serializer"
+
+    // BetterCloud
+    implementation group: "com.bettercloud", name: "bc-spring-boot-starter-microservice"
+    implementation group: "com.bettercloud" , name: "directory-data-models-lib"
+    implementation group: "com.bettercloud", name: "core-models-lib"
+
+    // Other
+    compileOnly group: "org.projectlombok", name: "lombok"
+    annotationProcessor group: "org.projectlombok", name: "lombok"
+    implementation group: "com.bazaarvoice.jolt", name: "jolt-core", version: jolt_version
+    implementation group: "com.bazaarvoice.jolt", name: "json-utils", version: jolt_version
+    implementation group: "com.jayway.jsonpath", name: "json-path", version: json_path_version
+    implementation group: "com.google.guava", name: "guava", version: google_guava_version
+    integrationtestImplementation group: "com.github.tomakehurst", name: "wiremock-jre8", version: wire_mock_version
+
+    // Prometheus
+    implementation group: "io.micrometer", name: "micrometer-registry-prometheus"
+
+//    implementation "org.springframework:spring-web:5.3.16"
+
+    // Cucumber
+//    testImplementation group: "io.cucumber", name: "cucumber-java", version: "7.3.2"
+//    testImplementation group: "io.cucumber", name: "cucumber-junit", version: "7.3.2"
+//    testImplementation group: "io.cucumber", name: "cucumber-spring", version: "7.3.2"
+    integrationtestImplementation group: "io.cucumber", name: "cucumber-java", version: "7.3.2"
+    integrationtestImplementation group: "io.cucumber", name: "cucumber-junit", version: "7.3.2"
+    integrationtestImplementation group: "io.cucumber", name: "cucumber-spring", version: "7.3.2"
+//    integrationtestImplementation "org.springframework:spring-web:5.3.16"
+
+    testImplementation group: "org.apache.kafka", name: "kafka-clients", version: kafka_client_version
+    testImplementation group: "org.springframework.boot", name: "spring-boot-starter-test"
+    implementation group: "org.testcontainers", name: "testcontainers", version: test_containers_version
+
+    testCompileOnly group: "org.projectlombok", name: "lombok"
+    testAnnotationProcessor group: "org.projectlombok", name: "lombok"
+
+    // Provide at compile-time the classes produced by main and test
+    integrationtestImplementation sourceSets.main.output
+    integrationtestImplementation sourceSets.test.output
+
+    // Provide at compile-time the dependencies that main and test require
+    integrationtestImplementation configurations.implementation
+    integrationtestImplementation configurations.testCompileOnly
+    integrationtestImplementation configurations.testImplementation
+    integrationtestAnnotationProcessor configurations.testAnnotationProcessor
+
+    // Provide at run-time the dependencies that main and test require
+    integrationtestRuntime configurations.runtime
+    integrationtestRuntime configurations.testRuntime
+
+    integrationtestImplementation group: "org.springframework.boot", name: "spring-boot-starter-aop"
+    integrationtestImplementation group: "org.springframework.boot", name: "spring-boot-starter-web"
+}
+test{
+    useJUnitPlatform()
+}

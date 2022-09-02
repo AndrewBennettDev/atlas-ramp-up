@@ -1,0 +1,9 @@
+sonarqube {
+    properties {
+        property "sonar.projectKey", "bettercloud:projectx:integrations-ingestion-micro"
+        property "sonar.projectName", "integrations-ingestion-micro"
+        property "sonar.projectVersion", "1.0"
+        property "sonar.exclusions", "**/model/**/*, **/config/**/*, **/health/**/*, **/constants/**/*, **/*Application.java"
+        property "sonar.coverage.exclusions", "**/constants/*, **/exception/*, **/log/**/*, **/model/**/*, **/config/**/*, **/health/**/*, **/Application*"
+    }
+}

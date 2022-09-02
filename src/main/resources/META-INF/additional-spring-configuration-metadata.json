@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "atlas-ramp-up.kafka.topic",
+      "type": "java.lang.String",
+      "description": "Description for atlas-ramp-up.kafka.topic."
+    }
+  ]
+}
