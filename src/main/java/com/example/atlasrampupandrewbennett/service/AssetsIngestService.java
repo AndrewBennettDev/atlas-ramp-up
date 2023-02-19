@@ -52,8 +52,8 @@ public class AssetsIngestService {
 
   protected GoogleFiles getGoogleFiles() {
     GatewayRequest gatewayRequest = new GatewayRequest();
-    gatewayRequest.setTenantId("6ba920b2-098c-11ec-a73d-6f1aabf220db");
-    gatewayRequest.setIntegrationId("6b6a425f-098c-11ec-8c5d-cdde4890d4d5");
+    gatewayRequest.setTenantId("tenant_id");
+    gatewayRequest.setIntegrationId("integration_id");
     gatewayRequest.setDomain("googleapis.com/drive/v3");
     gatewayRequest.setPath("/files");
     gatewayRequest.setMethod("get");
